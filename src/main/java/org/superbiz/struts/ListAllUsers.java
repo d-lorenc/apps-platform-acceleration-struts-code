@@ -17,16 +17,23 @@
  */
 package org.superbiz.struts;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.List;
-import java.util.Properties;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+@Component
 public class ListAllUsers {
 
+    private final UserService userService;
     private int id;
     private String errorMessage;
     private List<User> users;
+
+    public ListAllUsers(UserService userService) {
+        this.userService = userService;
+    }
 
     public List<User> getUsers() {
         return users;
@@ -53,20 +60,16 @@ public class ListAllUsers {
     }
 
     public String execute() {
-
         try {
-            UserService service = null;
-            Properties props = new Properties();
-            props.put(Context.INITIAL_CONTEXT_FACTORY,
-                "org.apache.openejb.core.LocalInitialContextFactory");
-            Context ctx = new InitialContext(props);
-            service = (UserService) ctx.lookup("UserServiceImplLocal");
-            this.users = service.findAll();
+            this.users = new ArrayList();
+            Iterator iterator = userService.findAll().iterator();
+            while (iterator.hasNext()){
+                this.users.add((User) iterator.next());
+            }
         } catch (Exception e) {
             this.errorMessage = e.getMessage();
             return "failure";
         }
-
         return "success";
     }
 }

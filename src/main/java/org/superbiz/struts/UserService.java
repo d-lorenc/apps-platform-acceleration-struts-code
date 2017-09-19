@@ -17,13 +17,9 @@
 */
 package org.superbiz.struts;
 
-import java.util.List;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserService {
-
-    public void add(User user);
-
-    public User find(int id);
-
-    public List<User> findAll();
+@Repository
+public interface UserService extends CrudRepository<User, Long> {
 }
